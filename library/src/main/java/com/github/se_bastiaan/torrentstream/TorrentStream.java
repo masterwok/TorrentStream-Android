@@ -167,13 +167,16 @@ public final class TorrentStream {
      * Pause TorrentSession
      */
     public void pauseSession() {
-        if (!isStreaming)
-            libTorrentHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    torrentSession.pause();
-                }
-            });
+        if (!isStreaming) {
+            return;
+        }
+
+        libTorrentHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                torrentSession.pause();
+            }
+        });
     }
 
     /**
@@ -321,7 +324,7 @@ public final class TorrentStream {
                         ThreadUtils.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                listener.onStreamError(null, new TorrentInfoException());
+                                listener.onStreamError(null, new TorrentInfoException(null));
                             }
                         });
                     }
@@ -409,11 +412,11 @@ public final class TorrentStream {
         torrentOptions = options;
 
         SettingsPack settingsPack = new SettingsPack()
-            .anonymousMode(torrentOptions.anonymousMode)
-            .connectionsLimit(torrentOptions.maxConnections)
-            .downloadRateLimit(torrentOptions.maxDownloadSpeed)
-            .uploadRateLimit(torrentOptions.maxUploadSpeed)
-            .activeDhtLimit(torrentOptions.maxDht);
+                .anonymousMode(torrentOptions.anonymousMode)
+                .connectionsLimit(torrentOptions.maxConnections)
+                .downloadRateLimit(torrentOptions.maxDownloadSpeed)
+                .uploadRateLimit(torrentOptions.maxUploadSpeed)
+                .activeDhtLimit(torrentOptions.maxDht);
 
         if (torrentOptions.listeningPort != -1) {
             String ifStr = String.format(Locale.ENGLISH, "%s:%d", "0.0.0.0", torrentOptions.listeningPort);
